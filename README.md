@@ -9,7 +9,7 @@ This template will serve as a quick-start for those who do not wish to use an ID
 ##Subfolders:
 
 1. Library/
-   * This is the Library/ folder from the STM32F0xx_StdPeriph_Lib_V1.0.0 standard peripheral driver library produced by STM. This preserves the original structure which should make it easy to roll in library upgrades as they are published
+   * This is the Library/ folder from the STM32F0xx_StdPeriph_Lib_V1.3.1 standard peripheral driver library produced by STM. This preserves the original structure which should make it easy to roll in library upgrades as they are published
    * **Makefile** is not part of the STM release, and must be copied over if the library is upgraded.
    * **stm32f0xx_conf.h** is used to configure the peripheral library. It must be copied here if the library is upgraded. The file was file taken from the STM32F0-Discovery firmware package. It is found in the following directory:
       * Project/Demonstration/
