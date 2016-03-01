@@ -18,13 +18,19 @@ SRCS = stm32f0xx_adc.c stm32f0xx_cec.c stm32f0xx_comp.c stm32f0xx_crc.c \
 	stm32f0xx_spi.c stm32f0xx_syscfg.c stm32f0xx_tim.c \
 	stm32f0xx_usart.c stm32f0xx_wwdg.c
 
-OBJS = $(SRCS:.c=.o)
+#OBJS = $(SRCS:.c=.o)
+BUILDDIR = build
+OBJS = $(addprefix $(BUILDDIR)/, $(addsuffix .o, $(basename $(SRCS))))
 
 .PHONY: libstm32f0.a
 
 all: libstm32f0.a
 
-%.o : %.c
+#%.o : %.c
+#	$(CC) $(CFLAGS) -c -o $@ $^
+
+$(BUILDDIR)/%.o : %.c
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c -o $@ $^
 
 libstm32f0.a: $(OBJS)

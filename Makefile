@@ -1,8 +1,11 @@
 # put your *.o targets here, make should handle the rest!
-SRCS = main.c system_stm32f0xx.c
+SRCS = main.c system_stm32f0xx.c dig_inouts.c pwm.c adc.c
+
+#SRCS = src/$(wildcard *.c)
 
 # all the files will be generated with this name (main.elf, main.bin, main.hex, etc)
-PROJ_NAME=main
+BUILDDIR = build
+PROJ_NAME=$(BUILDDIR)/main
 
 # Location of the Libraries folder from the STM32F0xx Standard Peripheral Library
 STD_PERIPH_LIB=Libraries
@@ -25,7 +28,7 @@ OBJCOPY=arm-none-eabi-objcopy
 OBJDUMP=arm-none-eabi-objdump
 SIZE=arm-none-eabi-size
 
-CFLAGS  = -Wall -g -std=c99 -Os
+CFLAGS  = -Wall -g -std=c99 -O3
 #CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m0 -march=armv6s-m
 CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
 CFLAGS += -ffunction-sections -fdata-sections
@@ -48,8 +51,9 @@ SRCS += Device/startup_stm32f0xx.s # add startup file to build
 #SRCS += stm32f0_discovery.c
 #SRCS += stm32f0_discovery.c stm32f0xx_it.c
 
-OBJS = $(SRCS:.c=.o)
+#OBJS = $(SRCS:.c=.o)
 
+OBJS = $(addprefix $(BUILDDIR)/, $(addsuffix .o, $(basename $(SRCS))))
 ###################################################
 
 .PHONY: lib proj
@@ -69,12 +73,15 @@ $(PROJ_NAME).elf: $(SRCS)
 	$(SIZE) $(PROJ_NAME).elf
 
 program: $(PROJ_NAME).bin
-	#openocd -f $(OPENOCD_BOARD_DIR)/stm32f0discovery.cfg -f $(OPENOCD_PROC_FILE) -c "stm_flash `pwd`/$(PROJ_NAME).bin" -c shutdown
 	st-flash --reset write ${PROJ_NAME}.bin 0x8000000
 
+program-op: $(PROJ_NAME).bin
+		openocd -f $(OPENOCD_BOARD_DIR)/stm32f0discovery.cfg -f $(OPENOCD_PROC_FILE) -c "stm_flash `pwd`/$(PROJ_NAME).bin" -c shutdown
+	
 clean:
 	find ./ -name '*~' | xargs rm -f
-	rm -f *.o
+	rm -f $(BUILDDIR)/*.o
+#	rm -f *.o
 	rm -f $(PROJ_NAME).elf
 	rm -f $(PROJ_NAME).hex
 	rm -f $(PROJ_NAME).bin
